@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Londrina+Shadow&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&display=swap');
+
+$base: #4c96d7;
+$accent: #8d8d8d;
+$gray: #bababa;
+$fblue: #a6cbeb;
+$black: #3a3a3a;
+$white: #ffffff;
+
+$baseFont: 'Courier New', Courier, monospace;
+$accentFont: 'Courier New', Courier, monospace;
+$coolFont: Love Ya Like A Sister;
+
+@mixin form-base {
+    label {
+        display: block;
+        font-weight: 600;
+        font-family: $baseFont;
+        font-size: 1.2rem;
+        input, textarea {
+            display: block;
+            font-family: $coolFont;
+            font-size: 1rem;
+            padding: .5rem;
+            font-weight: 600;
+            max-width: 18rem;
+            width: 100%;
+        }
+    }
+    p {
+        margin: 0;
+        font-weight: 600;
+        font-family: $baseFont;
+        font-size: 1.2rem;
+    }
+    #list {
+        display: block;
+        font-family: $coolFont;
+        font-size: 1rem;
+        padding: .5rem;
+        font-weight: 600;
+        max-width: 19rem;
+        width: 100%;
+        margin-bottom: .5rem;
+
+    }
+    #showBtn {
+        padding: .5rem 1rem;
+        background-color: $accent;
+        color: $white;
+        max-width: 12rem;
+        text-align: center;
+        margin: 0;
+        border-radius: .5rem;
+    }
+    #btn {
+        background-color: $base;
+        margin-top: .5rem;
+        font-family: $coolFont;
+        font-weight: 600;
+        font-size: 1.2rem;
+        padding: .5rem 1rem;
+    }
+}

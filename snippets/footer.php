@@ -1,3 +1,5 @@
-<p>&copy; PHP Motors. All rights reserved.</p>
-<p>Images are believed to be "Fair Use". Notify the author if not and they will be removed.</p>
-<p>Last Updated: <?php echo date('j F, Y',getlastmod()); ?></p>
+<footer>
+    <p>&copy;<span id="current-year"></span> PHP Motors, All right reserved.</p>
+    <p>All images used are belive to be in "Far Use". Please notify the author if any are n ot and they will be removed.</p>
+    <p>Last Update: <span  id="updated"></span></p>
+</footer>
