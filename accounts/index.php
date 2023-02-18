@@ -2,6 +2,9 @@
 
 //This is the Account Controller for the side
 
+// Create or access a Session
+session_start();
+
 // Get data connection file
 require_once '../libraries/connections.php';
 // Get the PHP motors model for use as needed 
@@ -29,7 +32,7 @@ switch ($action){
         include '../views/registration.php';
         break;
 
-    case 'register':
+    case 'register': //registration process
         // Filter and store the data
         $clientFirstname = filter_input(INPUT_POST, 'clientFirstname', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $clientLastname = filter_input(INPUT_POST, 'clientLastname', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -37,11 +40,20 @@ switch ($action){
         $clientPassword = trim(filter_input(INPUT_POST, 'clientPassword', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
         $clientEmail = checkEmail($clientEmail);
         $checkPassword = checkPassword($clientPassword);
-
+        
         // Check for missing data
         if(empty($clientFirstname) || empty($clientLastname) || empty($clientEmail) || empty($checkPassword)){
             $message = '<p>Please provide information for all empty form fields.</p>';
             include '../views/registration.php';
+            exit;
+        }
+
+        // Check for an existing email address
+        $existingEmail = checkExistingEmail($clientEmail);
+
+        if($existingEmail){
+            $message = '<p>The email address already exists. Do you want to login instead?</p>';
+            include '../views/login.php';
             exit;
         }
 
@@ -52,8 +64,9 @@ switch ($action){
 
         // Check and report the results
         if($regOutcome === 1){
-            $message = "<p>Thanks for registering $clientFirstname. Please use to email and password to login.</p>";
-            include '../views/login.php';
+            setcookie('firstname', $clientFirstname, strtotime('+1 year'), '/');
+            $_SESSION['message'] = "<p>Thanks for registering $clientFirstname. Please use your email and password to login.</p>";
+            header('Location: /phpmotors/accounts/?action=login');
             exit;
         }else{
             $message = "<p>Sorry $clientFirstname, but the registration failed. Please try again.</p>";
@@ -74,14 +87,49 @@ switch ($action){
             include '../views/login.php';
             exit;
         }
-        
+
+        // A valid password exists, proceed with the login process
+        // Query the client data based on the email address
+        $clientData = getClient($clientEmail);
+        // Compare the password just submitted against
+        // the hashed password for the matching client
+        $hashCheck = password_verify($clientPassword, $clientData['clientPassword']);
+        // If the hashes don't match create an error
+        // and return to the login view
+        if(!$hashCheck) {
+        $message = '<p>Please check your password and try again.</p>';
+        include '../views/login.php';
+        exit;
+        }
+
+        // a valid user exists, log them in
+        $_SESSION['loggedin'] = true;
+        //Removes the password from the array
+        array_pop($clientData);
+        // Store the arrey into the session
+        $_SESSION['clientData'] = $clientData;
+        // Send them to the admin byu
+        include '../views/admin.php';
+        exit;
         break;
         
-    case 'home':
+    case 'login':
+        include '../views/login.php';
+        break;
+
+    case 'logout':
+        session_destroy();
+        header('location: /phpmotors');
+        break;
+
+    case 'user':
+        include '../views/admin.php';
+        break;
+
     default: 
         include '../views/login.php';
-
     break;
 
     
 }
+?>
