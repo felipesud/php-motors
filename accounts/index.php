@@ -126,6 +126,67 @@ switch ($action){
         include '../views/admin.php';
         break;
 
+    case 'accountUpdate':
+        include '../views/client-update.php';
+        break;
+
+    case 'userUpdate':
+        $clientFirstname = filter_input(INPUT_POST, 'clientFirstname', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $clientLastname = filter_input(INPUT_POST, 'clientLastname', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $clientEmail = filter_input(INPUT_POST, 'clientEmail', FILTER_SANITIZE_EMAIL);
+        $clientId = filter_input(INPUT_POST, 'clientId', FILTER_SANITIZE_NUMBER_INT);
+
+        if(empty($clientFirstname) || empty($clientLastname) || empty($clientEmail)){
+            $message = '<p>Please provide information for all empty form fields.</p>';
+            include '../views/client-update.php';
+            exit;
+        }
+
+        $userUpdate = updateUser($clientId, $clientFirstname, $clientLastname, $clientEmail);
+        if($userUpdate === 1){
+            
+            $fullClient = getDataclient($clientId);
+            array_pop($fullClient);
+            // Store the array into the session
+            $_SESSION['clientData'] = $fullClient;
+            $message = "<p>User information has been updated successfully.</p>";
+            $_SESSION['message'] = $message;
+            header('location: /phpmotors/accounts/?action=user');
+            exit;
+        }else{
+            $message = "<p>Sorry, user information could not be updated. Please try again.</p>";
+            include '../views/client-update.php';
+            exit;
+        }
+        break;
+
+
+    case 'passChange':
+        $clientId = filter_input(INPUT_POST, 'clientId', FILTER_SANITIZE_NUMBER_INT);
+        $clientPassword = trim(filter_input(INPUT_POST, 'clientPassword', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
+        $checkPassword = checkPassword($clientPassword);
+
+        if(empty($checkPassword)){
+            $message2 = '<p>Please provide a valid password.</p>';
+            include '../views/client-update.php';
+            exit;
+        }
+
+        //Hash the checked password
+        $hashedPassword = password_hash($clientPassword, PASSWORD_DEFAULT);
+        $passChanged = changePassword($clientId, $hashedPassword);
+        if($passChanged === 1){
+            $message = "<p>Client Password has been updated successfully.</p>";
+            $_SESSION['message'] = $message;
+            header('location: /phpmotors/accounts/?action=user');
+            exit;
+        }else{
+            $message2 = "<p>Sorry, Client Password could not be updated. Please try again.</p>";
+            include '../views/client-update.php';
+            exit;
+        }
+        break;
+
     default: 
         include '../views/login.php';
     break;

@@ -2,6 +2,10 @@
     if(!isset($_SESSION['loggedin'])){
         header('Location: /phpmotors/accounts/');
     }
+
+    if (isset($_SESSION['message'])) {
+        $message = $_SESSION['message'];
+    }
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,11 +25,21 @@
     <main>
         <h1><?php echo $_SESSION['clientData']['clientFirstname'].' '.$_SESSION['clientData']['clientLastname']; ?></h1>
         <p>You are logged in.</p>
+        <?php
+            if(isset($message)){
+                echo $message;
+            }
+        ?>
         <ul>
             <li>First name: <?php echo $_SESSION['clientData']['clientFirstname']; ?></li>
             <li>Last name: <?php echo $_SESSION['clientData']['clientLastname']; ?></li>
             <li>Email: <?php echo $_SESSION['clientData']['clientEmail']; ?></li>
         </ul>
+        <section>
+            <h2>Account Management</h2>
+            <p>Use this link to update account information</p>
+            <p><a href="../accounts/?action=accountUpdate">Update Account Information</a></p>
+        </section>
         <section>
         <?php
             $clientLevel = $_SESSION['clientData']['clientLevel'];
@@ -37,8 +51,10 @@
         ?>
         </section>
         
+        
     </main>
     <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/phpmotors/snippets/footer.php' ?>
     <script src="/phpmotors/js/motors.js"></script>
 </body>
 </html>
+<?php unset($_SESSION['message']); ?>
