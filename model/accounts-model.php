@@ -64,7 +64,7 @@ function RegClient($clientFirstname, $clientLastname, $clientEmail, $clientPassw
         $stmt->bindValue(':clientEmail', $clientEmail, PDO::PARAM_STR);
         $stmt->bindValue(':clientId', $clientId, PDO::PARAM_INT);
         $stmt->execute();
-        $rowsChanged = $stmt->rowCount();
+        $rowsChanged = $stmt->rowCount($stmt);
         $stmt->closeCursor();
         return $rowsChanged;
     }
@@ -88,7 +88,7 @@ function RegClient($clientFirstname, $clientLastname, $clientEmail, $clientPassw
         $stmt->bindValue(':clientPassword', $clientPassword, PDO::PARAM_STR);
         $stmt->bindValue(':clientId', $clientId, PDO::PARAM_INT);
         $stmt->execute();
-        $rowsChanged = $stmt->rowCount();
+        $rowsChanged = $stmt->rowCount($stmt);
         $stmt->closeCursor();
         return $rowsChanged;
     }
