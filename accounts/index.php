@@ -14,12 +14,15 @@ require_once '../model/accounts-model.php';
 // Get the function library
 require_once '../libraries/functions.php';
 
+// Get the reviews model
+require_once '../model/reviews-model.php';
+
 $classifications = getClassifications();
 //var_dump($classifications);
 //exit;
 
-// Build a navigation bar using the $classifications array
-$navList = navList($classifications);
+ //Build a navigation bar using the $classifications array
+ $navList = navList($classifications);
 //echo $navList;
 //exit;
 
@@ -109,6 +112,9 @@ switch ($action){
         // Store the arrey into the session
         $_SESSION['clientData'] = $clientData;
         // Send them to the admin byu
+        $clientId = $_SESSION['clientData']['clientId'];
+        $clientReviews = reviewsByClient($clientId);
+        $reviewsDisplay = buildclientreviews($clientReviews);
         include '../views/admin.php';
         exit;
         break;
@@ -123,6 +129,9 @@ switch ($action){
         break;
 
     case 'user':
+        $clientId = $_SESSION['clientData']['clientId'];
+        $clientReviews = reviewsByClient($clientId);
+        $reviewsDisplay = buildclientreviews($clientReviews);
         include '../views/admin.php';
         break;
 

@@ -10,6 +10,8 @@ require_once '../model/vehicles-model.php';
 require_once '../model/main-model.php';
 require_once '../libraries/functions.php';
 require_once '../model/uploads-model.php';
+// Get the reviews library
+require_once '../model/reviews-model.php';
 //arrays
 $classifications = getClassifications(); //query the name
 $classLists = getClassList();   //query the whole data
@@ -103,11 +105,10 @@ switch ($action){
         $classificationId = filter_input(INPUT_GET, 'classificationId', FILTER_SANITIZE_NUMBER_INT);
         $inventoryArray = getInventoryByClassification($classificationId);
         echo json_encode($inventoryArray);
-
         break;
 
     case 'mod':
-        $invId = filter_input(INPUT_GET, 'invId', FILTER_VALIDATE_INT);
+        $invId = filter_input(INPUT_GET, 'invId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $invInfo = getInvItemInfo($invId);
         if(count($invInfo)<1){
             $message = 'Sorry, no vehicle information could be found.';
@@ -161,7 +162,7 @@ switch ($action){
     case 'deleteVehicle':
         $invMake = filter_input(INPUT_POST, 'invMake', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $invModel = filter_input(INPUT_POST, 'invModel', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $invId = filter_input(INPUT_POST, 'invId', FILTER_SANITIZE_NUMBER_INT);
+        $invId = filter_input(INPUT_POST, 'invId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $deleteResult = deleteItem($invId);
 
@@ -191,13 +192,16 @@ switch ($action){
         break;
 
     case 'vehicle-detail':
-        $vehicleId = filter_input(INPUT_GET, 'vehicleId', FILTER_SANITIZE_NUMBER_INT);
+        $vehicleId = filter_input(INPUT_GET, 'vehicleId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $vehicleSelected = getVehicleDetailInfo($vehicleId);
+        $vDetails = getInvItemInfo($vehicleId);
+        $reviews = reviewsForInventoryItem($vehicleId);
         $thumbnails = getThumbnailImages($vehicleId);
         if(!count($vehicleSelected)){
             $message = "<p>Sorry, the vehicle selected could not be found.</p>";
         } else {
             $vehicleSelectedDisplay = buildVehicleSelectedDisplay($vehicleSelected, $thumbnails);
+            $reviewsDisplay = buildReviewsDisplay($reviews);
         }
 
         include '../views/vehicle-detail.php';

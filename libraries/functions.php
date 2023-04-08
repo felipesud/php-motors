@@ -68,21 +68,21 @@ function buildVehicleSelectedDisplay($vehicleSelected, $thumbnails){
     
     foreach($vehicleSelected as $vehicleData){
         $dvs = "<h1>$vehicleData[invMake] $vehicleData[invModel]</h1>";
-        $dvs .= "<div>";
-        $dvs .=  "<div>";
+        $dvs .= "<section>";
+        $dvs .=  "<aside>";
         foreach($thumbnails as $thumbnail){
-            $dvs .= "<img class='thumbnail' src='$thumbnail[imgPath]' alt='Image of $vehicleData[invMake] $vehicleData[invModel] on phpmotors.com'>";
+            $dvs .= "<img class='thumbnail' src='$thumbnail[imgPath]' alt='Image of $vehicleData[invMake] $vehicleData[invModel] on phpmotors.com'></img>";
         }
-        $dvs .=  "</div>";
-        $dvs .= "<img id='principal' src='$vehicleData[imgPath]' alt='Image of $vehicleData[invMake] $vehicleData[invModel] on phpmotors.com'>";
-        $dvs .=  "<div>";
+        $dvs .=  "</aside>";
+        $dvs .= "<img id='principal' src='$vehicleData[imgPath]' alt='Image of $vehicleData[invMake] $vehicleData[invModel] on phpmotors.com'></img>";
+        $dvs .=  "<article>";
         $dvs .= "<p class='price'>Price: $". number_format($vehicleData['invPrice']) ."<span></span></p>";
         $dvs .= "<p class='description'>$vehicleData[invDescription]</p>";
         $dvs .= "<p class='color'>Color: <span>$vehicleData[invColor]</span></p>";
-        $dvs .= "<p class='stock'># In Stock: <span>$vehicleData[invStock]</span></p>";
-        $dvs .=  "</div>";
+     //   $dvs .= "<p class='stock'># In Stock: <span>$vehicleData[invStock]</span></p>";
+        $dvs .=  "</article>";
     }
-    $dvs .= "</div>";
+    $dvs .= "</section>";
     return $dvs;
 
 }
@@ -244,5 +244,118 @@ function resizeImage($old_image_path, $new_image_path, $max_width, $max_height) 
      imagedestroy($old_image);
 } // ends resizeImage function
 
+// Buind the search results
+function buildSearchResults($sResults){
+    $searchDisplay = '<section name="sResult" id="sResult">';
+    foreach ($sResults as $sResult){
+        $searchDisplay .= "<article>";
+        $searchDisplay .= "<a href='/phpmotors/vehicles/?action=vehicle-detail&vehicleId=$sResult[invId]'><h2>$sResult[invYear] $sResult[invMake] $sResult[invModel]</h2></a>";
+        $searchDisplay .= "<img src='$sResult[imgPath]' title='$sResult[invMake] $sResult[invModel] image on PHP Motors.com' alt='$sResult[invMake] $sResult[invModel] image on PHP Motors.com'>";
+        $searchDisplay .= "<p>$sResult[invDescription]</p>";
+        $searchDisplay .= "</article>";
+    }
+    $searchDisplay .= '</section>';
+    return $searchDisplay;
+}
+
+// Build pagination bar
+function pagination($totalPages, $page, $searchBar)
+{
+  // THIS CREATES THE PAGINATION LINKS AT THE BOTTOM OF THE SEARCH WHICH ALLOWS US TO GO FROM PAGE TO PAGE.
+    $previous = $page - 1;
+    $next = $page + 1;
+
+    //1 page
+    if($totalPages <= 1){
+        $paginationBar = "";
+    }
+    //1+ result
+    else {
+        // Div with numbers
+        $paginationBar = '<article id="pagination">';
+
+        //if current page is > 1, show the previous link
+        if ($page > 1){
+            $paginationBar .= '<a style="color:blue" title="Previous page" href="/phpmotors/search/index.php?action=search&page=' . $previous . '&searchBar= ' . $searchBar . '"><< Previous</a>';
+        }
+
+        //Create page numbers link
+        for ($page_num = 1; $page_num <= $totalPages; $page_num++){
+            if ($page_num != $page) {
+                $paginationBar .= '<a style="color:blue" title="Page ' . $page_num . '" href="/phpmotors/search/index.php?action=search&page=' . $page_num . '&searchBar=' . $searchBar . '">' . $page_num . '</a>';
+            } else {
+                $paginationBar .= '<a style="pointer-events: none;color:black" href="/phpmotors/search/index.php?action=search&page=' . $page_num . '">' . $page_num . '</a>';
+            }
+        };
+
+        if ($page < $totalPages){
+            $paginationBar .= '<a style="color:blue" title="Next page" href="/phpmotors/search/index.php?action=search&page=' . $next . '&searchBar= ' . $searchBar . '">Next >></a>';
+        }
+        $paginationBar .= '</article>';
+    }
+    return $paginationBar;
+}
+
+//Build reviews display in vehicle details view
+function buildReviewsDisplay($reviews) {
+    $review = '<div id="review-display">';
+      foreach ($reviews as $r) {
+        $first = $r['clientFirstname'][0];
+        $last = $r['clientLastname'];
+        $time = strtotime($r['reviewDate']);
+        $dateFormatted = (date("d F, Y",$time));
+  
+        $review .= '<div>';
+        $review .= "<h4>$first$last wrote on $dateFormatted:</h4>";
+        $review .= "<p>$r[reviewText]</p>";
+        $review .= '</div>';
+       
+      }
+      $review .= '</div>';
+      return $review;
+  }
+  
+function buildclientreviews($clientReviews) {
+    $cr = '<div id="client-reviews">';
+    $cr .= '<ul>';
+      foreach ($clientReviews as $r) {
+        $time = strtotime($r['reviewDate']);
+        $dateFormatted = (date("d F, Y",$time));
+        $id = $r['reviewId'];
+        $vehicleId = $r['invId'];
+        $clientId = $_SESSION['clientData']['clientId'];
+        
+        $cr .= "<li>$r[invMake] $r[invModel] (Reviewed on $dateFormatted): 
+                <a href='/phpmotors/reviews/?action=edit-review&reviewId=$id&clientId=$clientId&invId=$vehicleId'>Edit</a> 
+                | <a href='/phpmotors/reviews/?action=delete-review&reviewId=$id&clientId=$clientId&invId=$vehicleId'>Delete</a>";
+        $cr .= "<ul><li class='listSpace'>$r[reviewText]</li></ul>";
+        $cr .= '</li>';
+      }
+      $cr .= '</ul>';
+      $cr .= '</div>';
+      return $cr;
+  }
+
+ 
+
+//build a display of all the vehicle details within an unordered list   
+function buildDetailsDisplay($vehicle){
+    $details = '<div class="vehicleDetails">';
+    $details .= '<div id="child-1">';
+    $details .= "<img src='$vehicle[imgPath]' alt='Image of $vehicle[invMake] $vehicle[invModel] on phpmotors.com'>";
+    $currency = number_format($vehicle['invPrice']);
+    $details .= "<h2>$$currency</h2>";
+    $details .= '</div>';
+    $details .= '<div id="child-2">';
+    $details .= "<ul>";
+    $details .= "<li>$vehicle[invMake] $vehicle[invModel] Details</li>";
+    $details .= "<li>$vehicle[invDescription]</li>";
+    $details .= "<li>Color: $vehicle[invColor]</li>"; 
+    $details .= "<li># in Stock: $vehicle[invStock]</li>";
+    $details .= "</ul>";
+    $details .= '</div>';
+    $details .= '</div>';
+    return $details;
+   }
 
 ?>

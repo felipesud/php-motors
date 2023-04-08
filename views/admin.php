@@ -49,8 +49,15 @@
                 <p><a href='../vehicles/'>Vehicle Management</a></p>";
             }
         ?>
+
+<h2>Manage Your Product Reviews</h2>
+            <?php  
+            if (isset($reviewsDisplay)) {
+                echo $reviewsDisplay;
+               } ?>
         </section>
         
+            
         
     </main>
     <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/phpmotors/snippets/footer.php' ?>

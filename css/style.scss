@@ -11,19 +11,32 @@ html{
 body {
     padding: 0;
     margin: 0;
-    header h2 {
-        font-family: $accentFont;
-        display: inline-block;
-        position: absolute;
-        right: 1rem;
-        a {
-            text-decoration: none;
-            color: $black;
+    header {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        align-items: center;
+
+        #logo {
+            border-radius: 20px;
         }
+        #top-mark {
+            grid-column: 2 / 3;
+            font-family: $accentFont;
+            justify-self: end;
+
+            a {
+                text-decoration: none;
+                color: $black;
+            }
+        }
+        #lupa {
+                width: 1.5rem;
+                grid-column: 3 / 4;
+                align-content: center;
+                margin: .5rem 0.25rem 0 .5rem;
+        }    
     }
-    header img {
-        border-radius: 20px;
-    }
+
     nav ul {
         list-style: none;
         display: flex;
@@ -142,11 +155,11 @@ body {
         }
     }
     #veh-detail section {
-        aside {
+        aside img {
             display: none;
         }
     }
-    #login, #registration, #classification, #vehicle, #client-update, #uploads {
+    #login, #registration, #classification, #vehicle, #client-update, #uploads, #search {
         form {
             @include form-base;
         }
@@ -154,8 +167,48 @@ body {
             font-size: 1.5rem;
         }
     }
+    #search {
+        #search-form {
+            display: grid;
+            grid-template-columns: 1fr 8fr 1fr;
+            justify-content: center;
+            form {
+                grid-column: 2 / 3;
+                label  {
+                    input {
+                        width: 100%;
+                    }
+                }
+                input:focus:valid {
+                    /* insert your own styles for valid form input */
+                    background-color: rgb(0, 153, 51);
+                    color: $white;
+                }
+                input:focus:invalid {
+                    /* insert your own styles for invalid form input */
+                    background-color: rgb(252, 182, 231);
+                }
+            }
+        }
+        #sResult {
+            display: grid;
+            grid-template-columns: 1fr;
+            p {
+                font-size: 1.3rem;
+            }
+            img {
+                float: left;
+                margin: .5rem;
+            }
+        }
+    }
     #classification, #vehicle, #registration, #login, #client-update {
         form {
+            label {
+                input {
+                    max-width: 18rem;
+                }
+            }
             input:focus:valid {
                 /* insert your own styles for valid form input */
                 background-color: rgb(0, 153, 51);
@@ -215,6 +268,18 @@ body {
         }
     }
 
+    #pagination {
+        text-align: center;
+        margin: .5rem;
+        font-family: $baseFont;
+        color: $black;
+        font-size: 1.2rem;
+        a{
+            text-decoration: none;
+            margin: .5rem;
+        }
+    }
+
     footer {
         padding-top: .5rem;
         border-top: 3px $black solid;
@@ -239,15 +304,6 @@ body {
             margin: 2rem;
             border: 4px $base solid;
             border-radius: 15px;
-            header h2 {
-                right: 3rem;
-            }
-            nav ul {
-                justify-content: flex-start;
-                li {
-                    padding: .5rem 1.2rem;
-                }
-            }
 
             #inv-display {
                 flex-flow: row wrap;
@@ -300,88 +356,119 @@ body {
                     font-size: 1.2rem;
                 }
             }
-            #veh-detail section {
-                aside {
-                    display: block;
+
+            #search {
+                #sResult {
+                    article {
+                        display: grid;
+                        grid-template-columns: 1fr auto;
+                        padding: 1rem 1.5rem 0;
+                        img {
+                            grid-column: 2 / 3;
+                            grid-row: 1 / 3;
+                        }
+                        img:hover {                           
+                            animation: beat 60s;
+                        }
+                        h2 {
+                            margin: .5rem .5rem 0 .5rem;
+                        }
+                        p {
+                            margin: 0 .5rem .5rem .5rem;
+                        }
+                    }
                 }
             }
         }
     }
 }
 
- @media only screen and (min-width: 54rem) {
-    #home {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        #dmc {
-            grid-column: 1 / 3;
-            padding-left: 1.5rem;
-            .button {
-                display: none;
-            }
-            .list #btn1 {
-                display: block;
-                margin-top: 1rem;
-            }
-        }
-        #upgrades {
-            margin: 1.5rem;
-            grid-column: 1 / 2;
-            grid-row: 3 / 4;
-            h2 {
-                padding: 1rem 0;
-            }
-        }
-        #reviews {
-            margin: 1.5rem;
-            grid-column: 2 / 3;
-            h2 {
-                margin: 1.5rem;
-            }
+@media only screen and (min-width: 54rem) {
+    body {
+        nav ul {
+            justify-content: flex-start;
             li {
-                line-height: 2.2rem;
+                padding: .5rem 1.2rem;
+            }
+        }
+        #home {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            #dmc {
+                grid-column: 1 / 3;
+                padding-left: 1.5rem;
+                .button {
+                    display: none;
+                }
+                .list #btn1 {
+                    display: block;
+                    margin-top: 1rem;
+                }
+            }
+            #upgrades {
+                margin: 1.5rem;
+                grid-column: 1 / 2;
+                grid-row: 3 / 4;
+                h2 {
+                    padding: 1rem 0;
+                }
+            }
+            #reviews {
+                margin: 1.5rem;
+                grid-column: 2 / 3;
+                h2 {
+                    margin: 1.5rem;
+                }
+                li {
+                    line-height: 2.2rem;
+                }
+            }
+        }
+        #veh-detail section {
+            display: grid;
+            grid-template-columns: auto auto 1fr;
+            aside img {
+                display: block;
+            }
+            
+            img {
+                padding: 0 .5rem .5rem;
+            }
+            #principal {
+                grid-column: 2 / 3;
+                width: 100%;
+            }
+            aside {
+                grid-column: 1 / 2;
+            }
+            article {
+                grid-column: 3 / 4;
+                min-width: 20rem;
+            }
+            .thumbnail {
+                width: 9rem;
+                margin: 0 0 .5rem 0;
+                padding: 0;
+            }
+            .thumbnail:hover {
+                color: $accent;
+                animation: beat 60s;
+            }
+            .color {
+                padding: .5rem 1rem;
+                vertical-align: middle;
+            }
+            .price {
+                padding: .5rem;
+                margin: 0;
+            }
+            .description {
+                padding: .5rem 2.5rem .5rem 1rem;
+                line-height: 1.6;
+            }
+            .stock {
+                padding: .5rem 0 0rem 1rem;
             }
         }
     }
-    #veh-detail section {
-        display: grid;
-        grid-template-columns: 1fr auto 2fr;
-        img {
-            padding: .5rem;
-        }
-        #principal {
-            grid-column: 2 / 3;
-            width: 100%;
-        }
-        aside {
-            grid-column: 1 / 2;
-        }
-        article {
-            grid-column: 3 / 4;
-            min-width: 20rem;
-        }
-        .thumbnail {
-            width: 2rem;
-            margin: 0 0 .5rem 0;
-            padding: 0;
-        }
-        .thumbnail:hover {
-            color: $accent;
-            animation: beat 60s;
-        }
-        .color {
-            padding: .5rem 1rem;
-            vertical-align: middle;
-        }
-        .price {
-            padding: .5rem;
-        }
-        .description {
-            padding: .5rem 2.5rem .5rem 1rem;
-            line-height: 1.6;
-        }
-        .stock {
-            padding: .5rem 0 0rem 1rem;
-        }
-    }
- }
+}
